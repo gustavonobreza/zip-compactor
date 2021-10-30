@@ -12,40 +12,64 @@ import (
 	"github.com/ncruces/zenity"
 )
 
-func main() {
+var fromFlag *string
+var toFlag *string
+var quietFlag *bool
+var selected []string
+var target string
+
+func init() {
 	// Flags
-	fromFlag := flag.String("from", "", "path of the file to be ziped")
-	toFlag := flag.String("to", "", "path to create the ziped file")
-	quietFlag := flag.Bool("q", false, "quit, to not open the explorer after finished")
+	fromFlag = flag.String("from", "", "path of the file to be ziped")
+	toFlag = flag.String("to", "", "path to create the ziped file")
+	quietFlag = flag.Bool("q", false, "quit, to not open the explorer after finished")
 
 	flag.Parse()
+}
 
+func main() {
 	hasFF := len(*fromFlag) != 0
 	hasTF := len(*toFlag) != 0
 
+	if hasFF || hasTF {
+		// Use CLI
+		cliUsage(hasFF, hasTF)
+	} else {
+		// Use GUI
+		guiUsage()
+	}
+
+	// Validate the given paths
+	validateInputs()
+
+	ZipItems(target, selected)
+
+	openExplorer()
+}
+
+// Handle with CLI usage to deal with user inputs and determinate what is the target and the selecteds paths.
+func cliUsage(hasFF, hasTF bool) {
 	// If just one of two flags is given
 	if hasFF && !hasTF || !hasFF && hasTF {
 		println("The 'from' and 'to' flags are required!")
 		os.Exit(1)
 	}
+	selected = []string{*fromFlag}
+	target = *toFlag
+}
 
-	var selected []string
-	var target string
+// Handle with GUI usage to deal with user inputs and determinate what is the target and the selecteds paths.
+func guiUsage() {
+	selected, _ = zenity.SelectFileMutiple(zenity.Title("Selecione um item para compactar"))
+	target, _ = zenity.SelectFileSave(
+		zenity.Title("Selecione o destino"),
+		zenity.FileFilter{Patterns: []string{"*.zip", "*.ZIP"}},
+		zenity.ConfirmOverwrite(),
+	)
+}
 
-	if hasTF && hasFF {
-		// Use CLI (just can select one file)
-		selected = []string{*fromFlag}
-		target = *toFlag
-	} else {
-		// Use GUI
-		selected, _ = zenity.SelectFileMutiple(zenity.Title("Selecione um item para compactar"))
-		target, _ = zenity.SelectFileSave(
-			zenity.Title("Selecione o destino"),
-			zenity.FileFilter{Patterns: []string{"*.zip", "*.ZIP"}},
-			zenity.ConfirmOverwrite(),
-		)
-	}
-
+// Handle with target input. If the target not have the suffix ".zip" it'll applied.
+func validateInputs() {
 	if len(selected) == 0 || len(target) == 0 {
 		println("The file to be zipped and path to result are required!")
 		os.Exit(1)
@@ -54,14 +78,9 @@ func main() {
 	if !strings.HasSuffix(strings.ToLower(target), ".zip") {
 		target += ".zip"
 	}
-
-	ZipItems(target, selected)
-
-	if !(*quietFlag) {
-		openExplorer(target)
-	}
 }
 
+// Handle with the files to be zipped.
 func ZipItems(filename string, items []string) {
 	newZipFile, err := os.Create(filename)
 	he(err)
@@ -78,6 +97,7 @@ func ZipItems(filename string, items []string) {
 	}
 }
 
+// Handle with the action of zip a file.
 func AddItemToZip(zipWriter *zip.Writer, filename string) error {
 	itemToZip, err := os.Open(filename)
 	he(err)
@@ -97,9 +117,14 @@ func AddItemToZip(zipWriter *zip.Writer, filename string) error {
 	return err
 }
 
-func openExplorer(targetPath string) {
+// Handle with the action of open the explorer (windows).
+func openExplorer() {
+	if *quietFlag {
+		return
+	}
+
 	if runtime.GOOS == "windows" {
-		splitedTargetPath := strings.Split(targetPath, string(os.PathSeparator))
+		splitedTargetPath := strings.Split(target, string(os.PathSeparator))
 		parentOfTarget := strings.Join(splitedTargetPath[0:len(splitedTargetPath)-1], string(os.PathSeparator))
 		err := exec.Command("explorer", parentOfTarget).Run()
 
