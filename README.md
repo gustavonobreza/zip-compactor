@@ -4,19 +4,24 @@
 
 ## Usage
 
-### Install
+### Install (CLI USAGE)
 ```bash
 go install github.com/gustavonobreza/zip-compactor
 ```
-
-### Run in GUI (Can select many files)
-```bash
-zip-compactor
-```
-
 ### Run in CLI (Can select just one file to be zipped) 
 ```bash
 zip-compactor -from <File to be zipped> -to <Target path>
 ```
 
-A window will open to you select files.
+### Run in GUI (Can select many files)
+```bash
+git clone https://github.com/gustavonobreza/zip-compactor
+cd zip-compactor
+git install github.com/akavel/rsrc
+rsrc -ico ".\docs\zip.ico"
+go build -ldflags -H=windowsgui .
+```
+open the folder **zip-compactor** and copy executable file to your Desktop for example, or add in Start Menu (Windows)
+
+
+
