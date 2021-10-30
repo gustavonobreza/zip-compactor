@@ -1,4 +1,4 @@
-module github.com/gustavonobreza/go-poppup
+module github.com/gustavonobreza/zip-compactor
 
 go 1.17
 
