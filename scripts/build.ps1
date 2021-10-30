@@ -11,6 +11,6 @@ $env:GOOS = $originalOS; $env:GOARCH = $originalARCH;
 
 go install 'github.com/akavel/rsrc' | Out-Null;
 
-rsrc -icon .\docs\zip.ico;
+$build = & 'rsrc' -ico ".\docs\zip.ico" | Out-Null;
 
 go build -o $filebin .;
