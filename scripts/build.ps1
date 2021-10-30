@@ -1,13 +1,16 @@
 $filebin = "app.exe";
 
-
 if (!(Test-Path -Path "go.mod")) {
    echo "You is a wrong path!!! Go to home dir."
    exit 1
 }
 
-go install 'github.com/akavel/rsrc'
+$originalOS = go env GOHOSTOS
+$originalARCH = go env GOHOSTARCH
+$env:GOOS = $originalOS; $env:GOARCH = $originalARCH;
 
-rsrc -icon .\zip.ico
+go install 'github.com/akavel/rsrc' | Out-Null;
 
-go build -o $filebin .
+rsrc -icon .\docs\zip.ico;
+
+go build -o $filebin .;

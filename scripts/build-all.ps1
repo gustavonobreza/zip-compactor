@@ -2,8 +2,10 @@ $filebin = "zip-compactor";
 $OSs = @('windows', 'linux', 'darwin')
 $basePath = ".\bin\"
 $plataforms = @('amd64','arm64')
-$originalOS = go env GOOS
-$originalARCH = go env GOARCH
+$originalOS = go env GOHOSTOS
+$originalARCH = go env GOHOSTARCH
+
+$env:GOOS = $originalOS; $env:GOARCH = $originalARCH;
 
 Write-Output "Building your app..."
 Write-Output "ATTENTION: if you stop before you finish you will have problems."
@@ -15,8 +17,11 @@ if (!(Test-Path -Path "go.mod")) {
 }
 
 if (Test-Path -Path $basePath) {
-   Remove-Item -Force -Recurse -Confirm:$false $basePath
+  Write-Output "Removing bin folder..."
+  Remove-Item -Force -Recurse -Confirm:$false $basePath | Out-Null
 }
+
+New-Item -Path $basePath -ItemType Directory | Out-Null
 
 foreach ($os in $OSs) {
     foreach ($plataform in $plataforms) {
@@ -34,13 +39,13 @@ foreach ($os in $OSs) {
         # Zip to bin folder
         .\app.exe -from $binpath -to $to;
         # Delete file
-        Remove-Item -Force -Recurse -Confirm:$false $binpath;
+        Remove-Item -Force -Recurse -Confirm:$false $binpath | Out-Null;
 	}
 }
 
 # Restore initial values
-$env:GOOS = $originalOS;
-$env:GOARCH = $originalARCH;
+$env:GOOS = $originalOS; $env:GOARCH = $originalARCH;
+
 
 
 Write-Output "Finished!";
