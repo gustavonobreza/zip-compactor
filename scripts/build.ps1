@@ -13,4 +13,4 @@ go install 'github.com/akavel/rsrc' | Out-Null;
 
 $build = & 'rsrc' -ico ".\docs\zip.ico" | Out-Null;
 
-go build -o $filebin .;
+go build -ldflags -H=windowsgui -o $filebin .;
