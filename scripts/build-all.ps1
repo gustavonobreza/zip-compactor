@@ -6,6 +6,8 @@ $originalOS = go env GOOS
 $originalARCH = go env GOARCH
 
 Write-Output "Building your app..."
+Write-Output "ATTENTION: if you stop before you finish you will have problems."
+Write-Output "      SO, if that happens you need to restart the shell"
 
 if (!(Test-Path -Path "go.mod")) {
    echo "You is a wrong path!!! Go to home dir."
