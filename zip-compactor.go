@@ -17,14 +17,22 @@ var toFlag *string
 var quietFlag *bool
 var selected []string
 var target string
+var Version string
 
 func init() {
 	// Flags
 	fromFlag = flag.String("from", "", "path of the file to be ziped")
 	toFlag = flag.String("to", "", "path to create the ziped file")
 	quietFlag = flag.Bool("q", false, "quit, to not open the explorer after finished")
+	vFlag := flag.Bool("v", false, "get version of software")
+	versionFlag := flag.Bool("version", false, "get version of software")
 
 	flag.Parse()
+
+	if (*vFlag) || (*versionFlag) {
+		println(Version)
+		os.Exit(0)
+	}
 }
 
 func main() {
