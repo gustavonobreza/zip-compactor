@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	// Flags
 	fromFlag := flag.String("from", "", "path of the file to be ziped")
 	toFlag := flag.String("to", "", "path to create the ziped file")
 	quietFlag := flag.Bool("q", false, "quit, to not open the explorer after finished")
@@ -22,6 +23,7 @@ func main() {
 	hasFF := len(*fromFlag) != 0
 	hasTF := len(*toFlag) != 0
 
+	// If just one of two flags is given
 	if hasFF && !hasTF || !hasFF && hasTF {
 		println("The 'from' and 'to' flags are required!")
 		os.Exit(1)
@@ -55,15 +57,8 @@ func main() {
 
 	ZipItems(target, selected)
 
-	if runtime.GOOS == "windows" && !(*quietFlag) {
-		splitedTargetPath := strings.Split(target, string(os.PathSeparator))
-		parentOfTarget := strings.Join(splitedTargetPath[0:len(splitedTargetPath)-1], string(os.PathSeparator))
-		err := exec.Command("explorer", parentOfTarget).Run()
-
-		if err != nil {
-			zenity.CancelLabel("error: " + err.Error())
-			os.Exit(0)
-		}
+	if !(*quietFlag) {
+		openExplorer(target)
 	}
 }
 
@@ -100,6 +95,19 @@ func AddItemToZip(zipWriter *zip.Writer, filename string) error {
 	he(err)
 	_, err = io.Copy(writer, itemToZip)
 	return err
+}
+
+func openExplorer(targetPath string) {
+	if runtime.GOOS == "windows" {
+		splitedTargetPath := strings.Split(targetPath, string(os.PathSeparator))
+		parentOfTarget := strings.Join(splitedTargetPath[0:len(splitedTargetPath)-1], string(os.PathSeparator))
+		err := exec.Command("explorer", parentOfTarget).Run()
+
+		if err != nil {
+			zenity.CancelLabel("error: " + err.Error())
+			os.Exit(0)
+		}
+	}
 }
 
 // he Handle with errors to evit the repetion of handling with the same code
