@@ -15,6 +15,7 @@ import (
 func main() {
 	fromFlag := flag.String("from", "", "path of the file to be ziped")
 	toFlag := flag.String("to", "", "path to create the ziped file")
+	quietFlag := flag.Bool("q", false, "quit, to not open the explorer after finished")
 
 	flag.Parse()
 
@@ -54,7 +55,7 @@ func main() {
 
 	ZipItems(target, selected)
 
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == "windows" && !(*quietFlag) {
 		splitedTargetPath := strings.Split(target, string(os.PathSeparator))
 		parentOfTarget := strings.Join(splitedTargetPath[0:len(splitedTargetPath)-1], string(os.PathSeparator))
 		err := exec.Command("explorer", parentOfTarget).Run()
