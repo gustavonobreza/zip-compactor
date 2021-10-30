@@ -37,7 +37,7 @@ foreach ($os in $OSs) {
         # Build
 		$env:GOOS = $os; $env:GOARCH = $plataform; go build -o $binpath .;
         # Zip to bin folder
-        .\app.exe -from $binpath -to $to;
+        zip-compactor -from $binpath -to $to -q;
         # Delete file
         Remove-Item -Force -Recurse -Confirm:$false $binpath | Out-Null;
 	}
