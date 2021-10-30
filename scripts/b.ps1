@@ -5,8 +5,8 @@ if (!(Test-Path -Path "go.mod")) {
    exit 1
 }
 
-$originalOS = go env GOHOSTOS
-$originalARCH = go env GOHOSTARCH
+$originalOS = go env GOHOSTOS;
+$originalARCH = go env GOHOSTARCH;
 $env:GOOS = $originalOS; $env:GOARCH = $originalARCH;
 
 go install .;
