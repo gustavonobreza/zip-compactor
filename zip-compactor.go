@@ -5,6 +5,8 @@ import (
 	"flag"
 	"io"
 	"os"
+	"os/exec"
+	"runtime"
 	"strings"
 
 	"github.com/ncruces/zenity"
@@ -51,6 +53,17 @@ func main() {
 	}
 
 	ZipItems(target, selected)
+
+	if runtime.GOOS == "windows" {
+		splitedTargetPath := strings.Split(target, string(os.PathSeparator))
+		parentOfTarget := strings.Join(splitedTargetPath[0:len(splitedTargetPath)-1], string(os.PathSeparator))
+		err := exec.Command("explorer", parentOfTarget).Run()
+
+		if err != nil {
+			zenity.CancelLabel("error: " + err.Error())
+			os.Exit(0)
+		}
+	}
 }
 
 func ZipItems(filename string, items []string) {
