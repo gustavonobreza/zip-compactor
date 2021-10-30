@@ -1,10 +1,10 @@
-### Usage
+## Usage
 
-#### Install
+### Install
 ```bash
 go install github.com/gustavonobreza/zip-compactor
 ```
-#### Run
+### Run
 ```bash
 zip-compactor
 ```
