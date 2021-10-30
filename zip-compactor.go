@@ -5,6 +5,7 @@ import (
 	"flag"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/ncruces/zenity"
 )
@@ -33,12 +34,20 @@ func main() {
 	} else {
 		// Use GUI
 		selected, _ = zenity.SelectFileMutiple(zenity.Title("Selecione um item para compactar"))
-		target, _ = zenity.SelectFileSave(zenity.Title("Selecione o destino"), zenity.FileFilter{Patterns: []string{"*.zip", "*.ZIP"}})
+		target, _ = zenity.SelectFileSave(
+			zenity.Title("Selecione o destino"),
+			zenity.FileFilter{Patterns: []string{"*.zip", "*.ZIP"}},
+			zenity.ConfirmOverwrite(),
+		)
 	}
 
 	if len(selected) == 0 || len(target) == 0 {
 		println("The file to be zipped and path to result are required!")
 		os.Exit(1)
+	}
+
+	if !strings.HasSuffix(strings.ToLower(target), ".zip") {
+		target += ".zip"
 	}
 
 	ZipItems(target, selected)
