@@ -1,3 +1,7 @@
+<img align="center" src="./docs/zip.webp" alt="Zip image"/>
+
+<br>
+
 ## Usage
 
 ### Install
