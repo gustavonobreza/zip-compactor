@@ -2,10 +2,7 @@ module github.com/gustavonobreza/zip-compactor
 
 go 1.17
 
-require (
-	github.com/ncruces/zenity v0.7.12
-	golang.org/x/tools v0.1.5
-)
+require github.com/ncruces/zenity v0.7.12
 
 require (
 	github.com/akavel/rsrc v0.10.2 // indirect
