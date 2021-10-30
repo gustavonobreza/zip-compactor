@@ -2,6 +2,7 @@ package main
 
 import (
 	"archive/zip"
+	"flag"
 	"io"
 	"os"
 
@@ -9,19 +10,35 @@ import (
 )
 
 func main() {
-	selected, _ := zenity.SelectFileMutiple(zenity.Title("Selecione um item para compactar"))
+	fromFlag := flag.String("from", "", "path of the file to be ziped")
+	toFlag := flag.String("to", "", "path to create the ziped file")
 
-	if len(selected) == 0 {
-		os.Exit(0)
+	flag.Parse()
+
+	hasFF := len(*fromFlag) != 0
+	hasTF := len(*toFlag) != 0
+
+	if hasFF && !hasTF || !hasFF && hasTF {
+		println("The 'from' and 'to' flags are required!")
+		os.Exit(1)
 	}
-	for _, val := range selected {
-		print(val)
+
+	var selected []string
+	var target string
+
+	if hasTF && hasFF {
+		// Use CLI (just can select one file)
+		selected = []string{*fromFlag}
+		target = *toFlag
+	} else {
+		// Use GUI
+		selected, _ = zenity.SelectFileMutiple(zenity.Title("Selecione um item para compactar"))
+		target, _ = zenity.SelectFileSave(zenity.Title("Selecione o destino"), zenity.FileFilter{Patterns: []string{"*.zip", "*.ZIP"}})
 	}
 
-	target, _ := zenity.SelectFileSave(zenity.Title("Selecione o destino"), zenity.FileFilter{Patterns: []string{"*.zip", "*.ZIP"}})
-
-	if len(target) == 0 {
-		os.Exit(0)
+	if len(selected) == 0 || len(target) == 0 {
+		println("The file to be zipped and path to result are required!")
+		os.Exit(1)
 	}
 
 	ZipItems(target, selected)
@@ -64,11 +81,7 @@ func AddItemToZip(zipWriter *zip.Writer, filename string) error {
 
 // he Handle with errors to evit the repetion of handling with the same code
 func he(err error, msg ...interface{}) {
-	// str := reflect.TypeOf(msg).Kind() != "string"
 	if err != nil {
-		// if str {
-		// 	panic(msg)
-		// }
 		panic(err.Error())
 	}
 }
