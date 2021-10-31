@@ -17,7 +17,7 @@ zip-compactor -from <File to be zipped> -to <Target path>
 ```bash
 git clone https://github.com/gustavonobreza/zip-compactor
 cd zip-compactor
-git install github.com/akavel/rsrc
+go install github.com/akavel/rsrc
 rsrc -ico ".\docs\zip.ico"
 go build -ldflags -H=windowsgui .
 ```
