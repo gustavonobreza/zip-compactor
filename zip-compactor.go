@@ -17,7 +17,7 @@ var toFlag *string
 var quietFlag *bool
 var selected []string
 var target string
-var Version string
+var Version string // Dinamic, generated in build time.
 
 func init() {
 	// Flags
